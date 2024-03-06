@@ -1,1 +1,5 @@
 /target
+
+# Some IDE folders that I don't want on the repo
+/.idea/
+/.vscode/
