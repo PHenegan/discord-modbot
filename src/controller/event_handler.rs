@@ -20,7 +20,11 @@ impl EventHandler<'_> {
     }
 
     async fn ban_discord_links(&self, message: &Message) -> Result<(), Error> {
-        println!("Checking message '{:?}' for discord links", message);
+        println!(
+            "Checking message '{}' from user '{}' for discord links",
+            message.content, message.author.tag()
+        );
+
         // ensures the bot doesn't crash if the guild ID does not exist
         let guild_id = match message.guild_id {
             Some(id) => id,
@@ -28,7 +32,7 @@ impl EventHandler<'_> {
         };
 
         // return without doing anything if the message is fine
-        if !has_discord_link(message) { //|| self.is_allowed_invites(&guild_id, &message.author).await {
+        if !has_discord_link(message) || self.is_allowed_invites(&guild_id, &message.author).await {
             return Ok(());
         }
 
