@@ -2,8 +2,8 @@ use crate::{Data, Error};
 
 use poise::serenity_prelude::{ Context, FullEvent };
 use serenity::all::{ChannelId, GuildId, Message, User};
-use crate::controller::errors::LockError;
-use crate::utils::{get_channel_id, has_discord_link};
+use crate::controller::errors::AccessError;
+use crate::utils::{get_channel_id, has_discord_link, try_get_mutex};
 
 pub struct EventHandler<'a> {
     pub(crate) ctx: &'a Context,
@@ -12,6 +12,11 @@ pub struct EventHandler<'a> {
 
 impl EventHandler<'_> {
     pub async fn handle_event(&self, event: &FullEvent) -> Result<(), Error> {
+        // If the listener is not enabled, don't do anything
+        if try_get_mutex(&self.data.enable_listener)? {
+            return Ok(());
+        }
+        // Handle events
         match event {
             FullEvent::Message { new_message } => self.ban_discord_links(new_message).await?,
             _ => {}
@@ -36,20 +41,21 @@ impl EventHandler<'_> {
             return Ok(());
         }
 
-        // self.ctx.http.ban_user(
-        //     guild_id,
-        //     message.author.id,
-        //     1,
-        //     Some("Discord links are not allowed due to scam attacks"),
-        // ).await?;
-        println!("Found a discord link");
+        if try_get_mutex(&self.data.enable_bans)? {
+            self.ctx.http.ban_user(
+                guild_id,
+                message.author.id,
+                1,
+                Some("Discord links are not allowed due to scam attacks"),
+            ).await?;
+        }
 
         let all_channels = guild_id.channels(&self.ctx.http).await?;
 
         let channel: Option<ChannelId> = {
             let channel_name = self.data.log_channel
                 .lock()
-                .map_err(|_err| LockError)?;
+                .map_err(|_err| AccessError)?;
             channel_name.as_ref().map(|name| get_channel_id(&all_channels, &name)).flatten()
         };
 
