@@ -1,7 +1,6 @@
 use crate::{Data, Error};
 
-use poise::serenity_prelude::{ Context, FullEvent };
-use serenity::all::{ChannelId, GuildId, Message, User};
+use poise::serenity_prelude::{ChannelId, Context, FullEvent, GuildId, Message, User};
 use crate::controller::errors::AccessError;
 use crate::utils::{get_channel_id, has_discord_link, try_get_mutex};
 

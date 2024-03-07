@@ -2,7 +2,10 @@ mod controller;
 mod utils;
 
 use std::sync::Mutex;
+use anyhow::Context as _;
 use poise::serenity_prelude as serenity;
+use shuttle_secrets::SecretStore;
+use shuttle_serenity::ShuttleSerenity;
 use crate::controller::commands::{disable_bans, disable_listener, enable_bans, enable_listener, set_log_channel};
 use crate::controller::event_handler::event_handler;
 
@@ -14,9 +17,10 @@ struct Data {
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[tokio::main]
-async fn main() {
-    let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
+#[shuttle_runtime::main]
+async fn main(#[shuttle_secrets::Secrets] secret_store: SecretStore) -> ShuttleSerenity {
+    let token = secret_store.get("DISCORD_TOKEN")
+        .context("'DISCORD_TOKEN' not found")?;
     let intents = serenity::GatewayIntents::non_privileged()
         .union(serenity::GatewayIntents::MESSAGE_CONTENT);
 
@@ -49,5 +53,5 @@ async fn main() {
     let client = serenity::ClientBuilder::new(token, intents)
         .framework(framework)
         .await;
-    client.unwrap().start().await.unwrap();
+    client.into()
 }
