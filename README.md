@@ -14,12 +14,18 @@ is using `rustup`. See guides for that program on installing specific versions o
 
 A discord bot token is also required, and can be obtained from Discord's Developer Portal.
 
-The token will be read from the environment variable `DISCORD_TOKEN`.
-To set this environment variable and start the discord bot, you can run the following
-commands in a Linux/MacOS shell to compile the program and get the binary executable.
+The project uses [Shuttle](https://www.shuttle.rs), so for local development the project will
+load variables from `Secrets.dev.toml`. When deploying to shuttle, secrets will go into
+`Secrets.toml`. Your secrets file will go in the root directory, and will only have 1 line - the following:
+```
+DISCORD_TOKEN = 'your-token-here'
+```
+
+Now, you can build and run the program from any operating system with the following two commands
+(Note - on Windows the executable might be called `discord-modbot.exe` instead of `discord-modbot`,
+and the '/' will be replaced with '\\')
 ```
 cargo build
-export DISCORD_TOKEN=paste_here
 ./target/discord-modbot
 ```
 
@@ -32,3 +38,4 @@ name (it would end in `.exe`) and maybe the command for setting environment vari
 This bot relies on these libraries to function, they're worth checking out!
 - [Serenity](https://github.com/serenity-rs/serenity) - A library for interacting with the Discord API from Rust
 - [Poise](https://github.com/serenity-rs/poise) - A library built around Serenity for making commands easily
+- [Shuttle](https://www.shuttle.rs) - A deployment platform for rust with a free tier for community developers
