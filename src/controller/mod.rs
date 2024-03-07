@@ -1,3 +1,3 @@
 pub mod commands;
 pub mod event_handler;
-mod errors;
+pub mod errors;
