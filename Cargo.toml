@@ -9,9 +9,8 @@ rust-version = "1.75"
 [dependencies]
 poise = "0.6.1"
 tokio = { version = "1.21.2", features = ["macros", "rt-multi-thread", "rt"] }
-shuttle-rocket = "0.40.0"
-shuttle-runtime = "0.40.0"
-shuttle-secrets = "0.40.0"
-shuttle-serenity = "0.40.0"
+shuttle-runtime = "0.41.0"
+shuttle-secrets = "0.41.0"
+shuttle-serenity = "0.41.0"
 anyhow = "1.0.68"
 

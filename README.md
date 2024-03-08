@@ -38,4 +38,4 @@ name (it would end in `.exe`) and maybe the command for setting environment vari
 This bot relies on these libraries to function, they're worth checking out!
 - [Serenity](https://github.com/serenity-rs/serenity) - A library for interacting with the Discord API from Rust
 - [Poise](https://github.com/serenity-rs/poise) - A library built around Serenity for making commands easily
-- [Shuttle](https://www.shuttle.rs) - A deployment platform for rust with a free tier for community developers
+- [Shuttle](https://www.shuttle.rs) - A serverless deployment platform for rust with a free tier
