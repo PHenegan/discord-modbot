@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
-use serenity::all::{ChannelId, GuildChannel, Message};
+use poise::serenity_prelude::{ChannelId, GuildChannel, Message};
 use crate::controller::errors::AccessError;
 
 pub fn has_discord_link(msg: &Message) -> bool {

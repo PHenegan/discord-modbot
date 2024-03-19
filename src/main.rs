@@ -2,7 +2,11 @@ mod controller;
 mod utils;
 
 use std::sync::Mutex;
-use poise::serenity_prelude as serenity;
+use anyhow::Context as _;
+use poise::serenity_prelude::{ClientBuilder, GatewayIntents};
+use shuttle_runtime::CustomError;
+use shuttle_runtime::SecretStore;
+use shuttle_serenity::ShuttleSerenity;
 use crate::controller::commands::{disable_bans, disable_listener, enable_bans, enable_listener, set_log_channel};
 use crate::controller::event_handler::event_handler;
 
@@ -14,11 +18,12 @@ struct Data {
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-#[tokio::main]
-async fn main() {
-    let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
-    let intents = serenity::GatewayIntents::non_privileged()
-        .union(serenity::GatewayIntents::MESSAGE_CONTENT);
+#[shuttle_runtime::main]
+async fn main(#[shuttle_runtime::Secrets] secret_store: SecretStore) -> ShuttleSerenity {
+    let token = secret_store.get("DISCORD_TOKEN")
+        .context("'DISCORD_TOKEN' not found")?;
+    let intents = GatewayIntents::non_privileged()
+        .union(GatewayIntents::MESSAGE_CONTENT);
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
@@ -46,8 +51,9 @@ async fn main() {
         })
         .build();
 
-    let client = serenity::ClientBuilder::new(token, intents)
+    let client = ClientBuilder::new(token, intents)
         .framework(framework)
-        .await;
-    client.unwrap().start().await.unwrap();
+        .await
+        .map_err(CustomError::new)?;
+    Ok(client.into())
 }
