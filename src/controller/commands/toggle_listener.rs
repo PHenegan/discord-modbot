@@ -3,7 +3,12 @@ use crate::{Context, Error};
 use crate::utils::try_set_mutex;
 
 /// Enable listener to check messages for discord links
-#[command(slash_command, track_edits, prefix_command, rename="enable-checks")]
+#[command(prefix_command,
+track_edits,
+slash_command,
+rename="enable-checks",
+required_permissions = "ADMINISTRATOR"
+)]
 pub async fn enable_listener(ctx: Context<'_>) -> Result<(), Error> {
     println!("Received 'enable-checks' command");
     try_set_mutex(&ctx.data().enable_listener, true)?;
@@ -12,7 +17,12 @@ pub async fn enable_listener(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 /// Disable listener to check messages for discord links
-#[command(slash_command, track_edits, prefix_command, rename="disable-checks")]
+#[command(prefix_command,
+track_edits,
+slash_command,
+rename="disable-checks",
+required_permissions = "ADMINISTRATOR"
+)]
 pub async fn disable_listener(ctx: Context<'_>) -> Result<(), Error> {
     println!("Received 'disable-checks' command");
     try_set_mutex(&ctx.data().enable_listener, false)?;

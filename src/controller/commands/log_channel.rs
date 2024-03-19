@@ -3,7 +3,13 @@ use crate::{Context, Error};
 use crate::utils::{get_channel_id, try_set_mutex};
 
 /// Update the channel where moderation logs are sent
-#[command(prefix_command, track_edits, slash_command, rename="log-channel")]
+#[command(
+prefix_command,
+track_edits,
+slash_command,
+rename="log-channel",
+required_permissions = "ADMINISTRATOR"
+)]
 pub async fn set_log_channel(
     ctx: Context<'_>,
     channel_name: String
