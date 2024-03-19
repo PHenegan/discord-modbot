@@ -5,7 +5,7 @@ use std::sync::Mutex;
 use anyhow::Context as _;
 use poise::serenity_prelude::{ClientBuilder, GatewayIntents};
 use shuttle_runtime::CustomError;
-use shuttle_secrets::SecretStore;
+use shuttle_runtime::SecretStore;
 use shuttle_serenity::ShuttleSerenity;
 use crate::controller::commands::{disable_bans, disable_listener, enable_bans, enable_listener, set_log_channel};
 use crate::controller::event_handler::event_handler;
@@ -19,7 +19,7 @@ type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[shuttle_runtime::main]
-async fn main(#[shuttle_secrets::Secrets] secret_store: SecretStore) -> ShuttleSerenity {
+async fn main(#[shuttle_runtime::Secrets] secret_store: SecretStore) -> ShuttleSerenity {
     let token = secret_store.get("DISCORD_TOKEN")
         .context("'DISCORD_TOKEN' not found")?;
     let intents = GatewayIntents::non_privileged()
